@@ -1,11 +1,12 @@
 package main
 
 import (
-	"encoding/json"
 	"flag"
 	"fmt"
 	"log"
 	"net/http"
+	"os"
+	"time"
 )
 
 const version = "1.0.0"
@@ -21,6 +22,11 @@ type AppStatus struct {
 	Version     string `json:"version"`
 }
 
+type application struct {
+	config config
+	logger *log.Logger
+}
+
 func main() {
 	var cfg config
 
@@ -28,26 +34,24 @@ func main() {
 	flag.StringVar(&cfg.env, "env", "dev", "Application Environment (dev|prod)")
 	flag.Parse()
 
-	fmt.Println("Running .... ")
+	logger := log.New(os.Stdout, "", log.Ldate|log.Ltime)
 
-	http.HandleFunc("/status", func(writer http.ResponseWriter, request *http.Request) {
-		currentStatus := AppStatus{
-			Status:      "available",
-			Environment: cfg.env,
-			Version:     version,
-		}
+	app := &application{
+		config: cfg,
+		logger: logger,
+	}
 
-		json, err := json.MarshalIndent(currentStatus, "", "\t")
-		if err != nil {
-			log.Println(err)
-		}
+	serve := &http.Server{
+		Addr:         fmt.Sprintf(":%d", cfg.port),
+		Handler:      app.routes(),
+		IdleTimeout:  time.Minute,
+		ReadTimeout:  10 * time.Second,
+		WriteTimeout: 30 * time.Second,
+	}
 
-		writer.Header().Set("Content-Type", "application/json")
-		writer.WriteHeader(http.StatusOK)
-		writer.Write(json)
-	})
+	logger.Println("Starting server on port", cfg.port)
 
-	err := http.ListenAndServe(fmt.Sprintf(":%d", cfg.port), nil)
+	err := serve.ListenAndServe()
 	if err != nil {
 		log.Println(err)
 	}
