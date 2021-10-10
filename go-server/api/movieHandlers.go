@@ -2,10 +2,8 @@ package main
 
 import (
 	"errors"
-	"go-server-movie-backend/models"
 	"net/http"
 	"strconv"
-	"time"
 
 	"github.com/julienschmidt/httprouter"
 )
@@ -22,18 +20,7 @@ func (app *application) getOneMovie(writer http.ResponseWriter, request *http.Re
 
 	app.logger.Println("id is", id)
 
-	movie := models.Movie{
-		ID:          id,
-		Title:       "Shang Chi",
-		Description: "halo",
-		Year:        2021,
-		ReleaseDate: time.Date(2021, 8, 28, 0, 0, 0, 0, time.Local),
-		Runtime:     100,
-		Rating:      5,
-		MPAARating:  "PG-13",
-		CreatedAt:   time.Now(),
-		UpdatedAt:   time.Now(),
-	}
+	movie, err := app.models.DB.GetMovie(id)
 
 	err = app.writeJSON(writer, http.StatusOK, movie, "movie")
 }
