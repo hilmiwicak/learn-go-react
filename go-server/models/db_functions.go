@@ -18,7 +18,13 @@ func (model *DBModel) Movie(id int) (*Movie, error) {
 	defer cancel()
 
 	// the $1 is a placeholder
-	query := `select id, title, description, year, release_date, rating, runtime, mpaa_rating, created_at, updated_at from movies where id = $1`
+	query := `	SELECT 
+					id, title, description, year, release_date, rating, runtime, mpaa_rating, created_at, updated_at 
+				FROM 
+					movies
+				WHERE
+					id = $1
+	`
 
 	row := model.DB.QueryRowContext(ctx, query, id)
 
@@ -40,7 +46,38 @@ func (model *DBModel) Movie(id int) (*Movie, error) {
 		return nil, err
 	}
 
-	// the challenge is here but i don't know shit about these lmao
+	query = `	SELECT
+					mg.id, mg.movie_id, mg.genre_id, g.genre_name
+				FROM
+					movies_genres AS mg
+				LEFT JOIN
+					genres AS g
+				ON
+					 g.id = mg.genre_id
+				WHERE
+					mg.movie_id = $1
+	`
+
+	rows, _ := model.DB.QueryContext(ctx, query, id)
+	defer rows.Close()
+
+	genres := make(map[int]string)
+	for rows.Next() {
+		var mg MovieGenre
+		err := rows.Scan(
+			&mg.ID,
+			&mg.MovieID,
+			&mg.GenreID,
+			&mg.Genre.GenreName,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		genres[mg.ID] = mg.Genre.GenreName
+	}
+
+	movie.MovieGenre = genres
 
 	return &movie, nil
 }
