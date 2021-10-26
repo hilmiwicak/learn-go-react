@@ -13,10 +13,11 @@ type DBModel struct {
 /*
  * returns one movie and error, if any
  */
-func (model *DBModel) GetMovie(id int) (*Movie, error) {
+func (model *DBModel) Movie(id int) (*Movie, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
+	// the $1 is a placeholder
 	query := `select id, title, description, year, release_date, rating, runtime, mpaa_rating, created_at, updated_at from movies where id = $1`
 
 	row := model.DB.QueryRowContext(ctx, query, id)
@@ -47,6 +48,6 @@ func (model *DBModel) GetMovie(id int) (*Movie, error) {
 /*
  * returns all movies and error if any
  */
-func (model *DBModel) AllMovie(id int) ([]*Movie, error) {
+func (model *DBModel) AllMovies(id int) ([]*Movie, error) {
 	return nil, nil
 }

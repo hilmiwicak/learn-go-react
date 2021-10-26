@@ -20,7 +20,7 @@ func (app *application) getOneMovie(writer http.ResponseWriter, request *http.Re
 
 	app.logger.Println("id is", id)
 
-	movie, err := app.models.DB.GetMovie(id)
+	movie, err := app.models.DB.Movie(id)
 
 	err = app.writeJSON(writer, http.StatusOK, movie, "movie")
 }
