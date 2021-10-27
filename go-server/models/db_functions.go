@@ -13,7 +13,7 @@ type DBModel struct {
 /*
  * returns one movie and error, if any
  */
-func (model *DBModel) Movie(id int) (*Movie, error) {
+func (m *DBModel) Movie(id int) (*Movie, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
@@ -26,7 +26,7 @@ func (model *DBModel) Movie(id int) (*Movie, error) {
 					id = $1
 	`
 
-	row := model.DB.QueryRowContext(ctx, query, id)
+	row := m.DB.QueryRowContext(ctx, query, id)
 
 	var movie Movie
 
@@ -58,7 +58,7 @@ func (model *DBModel) Movie(id int) (*Movie, error) {
 					mg.movie_id = $1
 	`
 
-	rows, _ := model.DB.QueryContext(ctx, query, id)
+	rows, _ := m.DB.QueryContext(ctx, query, id)
 	defer rows.Close()
 
 	genres := make(map[int]string)
@@ -85,6 +85,6 @@ func (model *DBModel) Movie(id int) (*Movie, error) {
 /*
  * returns all movies and error if any
  */
-func (model *DBModel) AllMovies(id int) ([]*Movie, error) {
+func (m *DBModel) AllMovies(id int) ([]*Movie, error) {
 	return nil, nil
 }

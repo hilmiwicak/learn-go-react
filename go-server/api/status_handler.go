@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-func (app *application) statusHandler(writer http.ResponseWriter, request *http.Request) {
+func (app *application) statusHandler(w http.ResponseWriter, r *http.Request) {
 	currentStatus := AppStatus{
 		Status:      "available",
 		Environment: app.config.env,
@@ -17,7 +17,7 @@ func (app *application) statusHandler(writer http.ResponseWriter, request *http.
 		app.logger.Println(err)
 	}
 
-	writer.Header().Set("Content-Type", "application/json")
-	writer.WriteHeader(http.StatusOK)
-	writer.Write(json)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(json)
 }

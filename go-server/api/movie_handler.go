@@ -8,13 +8,13 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-func (app *application) getOneMovie(writer http.ResponseWriter, request *http.Request) {
-	params := httprouter.ParamsFromContext(request.Context())
+func (app *application) getOneMovie(w http.ResponseWriter, r *http.Request) {
+	params := httprouter.ParamsFromContext(r.Context())
 
 	id, err := strconv.Atoi(params.ByName("id"))
 	if err != nil {
 		app.logger.Print(errors.New("invalid id parameter"))
-		app.errorJSON(writer, err)
+		app.errorJSON(w, err)
 		return
 	}
 
@@ -22,9 +22,9 @@ func (app *application) getOneMovie(writer http.ResponseWriter, request *http.Re
 
 	movie, err := app.models.DB.Movie(id)
 
-	err = app.writeJSON(writer, http.StatusOK, movie, "movie")
+	err = app.writeJSON(w, http.StatusOK, movie, "movie")
 }
 
-func (app *application) getAllMovies(writer http.ResponseWriter, request *http.Request) {
+func (app *application) getAllMovies(w http.ResponseWriter, r *http.Request) {
 
 }
