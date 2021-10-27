@@ -12,6 +12,25 @@ import Movies from "./components/Movies";
 import Movie from "./components/Movie";
 import Categories from "./components/Categories";
 
+function Category() {
+  let { path } = useRouteMatch();
+
+  return (
+    <div>
+      <h2>Categories</h2>
+
+      <ul>
+        <li>
+          <Link to={`${path}/drama`}>Drama</Link>
+        </li>
+        <li>
+          <Link to={`${path}/comedy`}>Comedy</Link>
+        </li>
+      </ul>
+    </div>
+  );
+}
+
 export default function App() {
   return (
     <BrowserRouter>
@@ -72,24 +91,5 @@ export default function App() {
         </div>
       </div>
     </BrowserRouter>
-  );
-}
-
-function Category() {
-  let { path } = useRouteMatch();
-
-  return (
-    <div>
-      <h2>Categories</h2>
-
-      <ul>
-        <li>
-          <Link to={`${path}/drama`}>Drama</Link>
-        </li>
-        <li>
-          <Link to={`${path}/comedy`}>Comedy</Link>
-        </li>
-      </ul>
-    </div>
   );
 }

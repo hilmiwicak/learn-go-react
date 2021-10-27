@@ -10,19 +10,19 @@ export default class Movies extends React.Component {
   componentDidMount() {
     fetch("http://localhost:4000/v1/movies")
       .then((response) => response.json())
-      .then((json) =>
+      .then((json) => {
         this.setState({
           movies: json.movies,
           isLoaded: true,
-        })
-      );
+        });
+      });
   }
 
   render() {
     const { movies, isLoaded } = this.state;
 
     if (!isLoaded) {
-      return (<p>Loading...</p>);
+      return <p>Loading...</p>;
     } else {
       return (
         <Fragment>
