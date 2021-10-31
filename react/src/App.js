@@ -4,32 +4,12 @@ import {
   Switch,
   Route,
   Link,
-  useRouteMatch,
 } from "react-router-dom";
 import Home from "./components/Home";
 import Admin from "./components/Admin";
 import Movies from "./components/Movies";
 import Movie from "./components/Movie";
-import Categories from "./components/Categories";
-
-function Category() {
-  let { path } = useRouteMatch();
-
-  return (
-    <div>
-      <h2>Categories</h2>
-
-      <ul>
-        <li>
-          <Link to={`${path}/drama`}>Drama</Link>
-        </li>
-        <li>
-          <Link to={`${path}/comedy`}>Comedy</Link>
-        </li>
-      </ul>
-    </div>
-  );
-}
+import Genres from "./components/Genres"
 
 export default function App() {
   return (
@@ -52,7 +32,7 @@ export default function App() {
                   <Link to="/movies">Movies</Link>
                 </li>
                 <li className="list-group-item">
-                  <Link to="/category">Categories</Link>
+                  <Link to="/genres">Genres</Link>
                 </li>
                 <li className="list-group-item">
                   <Link to="/admin">Admin</Link>
@@ -67,19 +47,9 @@ export default function App() {
                 <Home />
               </Route>
               <Route exact path="/movies/:id" component={Movie}></Route>
-              <Route exact path="/category">
-                <Category />
+              <Route exact path="/genres">
+                <Genres />
               </Route>
-              <Route
-                exact
-                path="/category/drama"
-                render={(props) => <Categories {...props} title={`Drama`} />}
-              ></Route>
-              <Route
-                exact
-                path="/category/comedy"
-                render={(props) => <Categories {...props} title={`Comedy`} />}
-              ></Route>
               <Route path="/admin">
                 <Admin />
               </Route>
