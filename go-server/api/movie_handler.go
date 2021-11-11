@@ -30,6 +30,8 @@ func (app *application) getOneMovie(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) getAllMovies(w http.ResponseWriter, r *http.Request) {
+	app.logger.Println("getting all movies")
+
 	movies, err := app.models.DB.AllMovies()
 	if err != nil {
 		app.errorJSON(w, err)
@@ -37,6 +39,22 @@ func (app *application) getAllMovies(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = app.writeJSON(w, http.StatusOK, movies, "movies")
+	if err != nil {
+		app.errorJSON(w, err)
+		return
+	}
+}
+
+func (app *application) getAllGenres(w http.ResponseWriter, r *http.Request) {
+	app.logger.Println("getting all genres")
+
+	genres, err := app.models.DB.AllGenres()
+	if err != nil {
+		app.errorJSON(w, err)
+		return
+	}
+
+	err = app.writeJSON(w, http.StatusOK, genres, "genres")
 	if err != nil {
 		app.errorJSON(w, err)
 		return
