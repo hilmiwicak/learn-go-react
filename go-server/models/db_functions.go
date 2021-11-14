@@ -15,16 +15,11 @@ type DBModel struct {
  * the $1 is a placeholder
  */
 const movieGenresQuery = `
-	SELECT
-		mg.id, mg.movie_id, mg.genre_id, g.genre_name
-	FROM
-		movies_genres AS mg
-	LEFT JOIN
-		genres AS g
-	ON
-		g.id = mg.genre_id
-	WHERE
-		mg.movie_id = $1
+	   SELECT mg.id, mg.movie_id, mg.genre_id, g.genre_name
+	     FROM movies_genres AS mg
+	LEFT JOIN genres AS g
+	       ON g.id = mg.genre_id
+	    WHERE mg.movie_id = $1
 `
 
 /*
@@ -34,13 +29,9 @@ func (m *DBModel) Movie(id int) (*Movie, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	movieQuery := `
-					SELECT 
-						id, title, description, year, release_date, rating, runtime, mpaa_rating, created_at, updated_at 
-					FROM 
-						movies
-					WHERE
-						id = $1
+	movieQuery := `	SELECT id, title, description, year, release_date, rating, runtime, mpaa_rating, created_at, updated_at 
+					  FROM movies
+					 WHERE id = $1
 	`
 	row := m.DB.QueryRowContext(ctx, movieQuery, id)
 
@@ -93,12 +84,9 @@ func (m *DBModel) AllMovies() ([]*Movie, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	query := `	SELECT 
-					id, title, description, year, release_date, rating, runtime, mpaa_rating, created_at, updated_at 
-				FROM 
-					movies
-				ORDER BY
-					title
+	query := `	  SELECT id, title, description, year, release_date, rating, runtime, mpaa_rating, created_at, updated_at 
+				    FROM movies
+				ORDER BY title
 	`
 
 	rows, err := m.DB.QueryContext(ctx, query)
@@ -159,7 +147,7 @@ func (m *DBModel) AllGenres() ([]*Genre, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	query := `select id, genre_name, created_at, updated_at from genres order by genre_name`
+	query := `SELECT id, genre_name, created_at, updated_at FROM genres ORDER BY genre_name`
 
 	rows, err := m.DB.QueryContext(ctx, query)
 	if err != nil {
