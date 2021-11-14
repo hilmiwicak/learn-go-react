@@ -141,6 +141,76 @@ func (m *DBModel) AllMovies() ([]*Movie, error) {
 }
 
 /*
+ * returns all movies from a genre
+ * pretty redundant (should've been DRY, but i do this
+ * because i know this func CAN BE USED ONLY at this func)
+ * if you want to be DRY, use AllMovies func
+ * and use variadic parameter int
+ */
+func (m *DBModel) AllMoviesByGenre(id int) ([]*Movie, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	query := `	  SELECT id, title, description, year, release_date, rating, runtime, mpaa_rating, created_at, updated_at 
+				    FROM movies
+				   WHERE id IN ( SELECT movie_id
+								   FROM movies_genres
+								  WHERE genre_id = $1)
+				ORDER BY title
+	`
+
+	rows, err := m.DB.QueryContext(ctx, query, id)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var movies []*Movie
+
+	for rows.Next() {
+		var movie Movie
+		err := rows.Scan(
+			&movie.ID,
+			&movie.Title,
+			&movie.Description,
+			&movie.Year,
+			&movie.ReleaseDate,
+			&movie.Rating,
+			&movie.Runtime,
+			&movie.MPAARating,
+			&movie.CreatedAt,
+			&movie.UpdatedAt,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		genreRows, _ := m.DB.QueryContext(ctx, movieGenresQuery, movie.ID)
+
+		genres := make(map[int]string)
+		for genreRows.Next() {
+			var mg MovieGenre
+			err := genreRows.Scan(
+				&mg.ID,
+				&mg.MovieID,
+				&mg.GenreID,
+				&mg.Genre.GenreName,
+			)
+			if err != nil {
+				return nil, err
+			}
+			genres[mg.ID] = mg.Genre.GenreName
+		}
+		genreRows.Close()
+
+		movie.MovieGenre = genres
+		movies = append(movies, &movie)
+	}
+
+	return movies, nil
+}
+
+/*
  * get all genres
  */
 func (m *DBModel) AllGenres() ([]*Genre, error) {
