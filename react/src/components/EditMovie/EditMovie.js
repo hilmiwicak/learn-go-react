@@ -143,7 +143,7 @@ export default class EditMovie extends React.Component {
               name="description"
               rows="5"
               onChange={this.handleChange}
-              value={movie.value}
+              value={movie.description}
             />
           </div>
 
