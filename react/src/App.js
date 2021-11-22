@@ -11,6 +11,7 @@ import Movies from "./components/Movies";
 import Movie from "./components/Movie";
 import Genres from "./components/Genres"
 import Genre from "./components/Genre";
+import EditMovie from "./components/EditMovie/EditMovie";
 
 export default function App() {
   return (
@@ -18,8 +19,6 @@ export default function App() {
       <div className="container">
         <div className="row">
           <h1 className="mt-3">Go-React Watch Movies</h1>
-          <hr />
-          <hr className="mb-3"></hr>
         </div>
 
         <div className="row">
@@ -34,6 +33,9 @@ export default function App() {
                 </li>
                 <li className="list-group-item">
                   <Link to="/genres">Genres</Link>
+                </li>
+                <li className="list-group-item">
+                  <Link to="/admin/add-movie">Add Movies</Link>
                 </li>
                 <li className="list-group-item">
                   <Link to="/admin">Admin</Link>
@@ -52,6 +54,7 @@ export default function App() {
               <Route exact path="/genres">
                 <Genres />
               </Route>
+              <Route path="/admin/add-movie" component={EditMovie}/>
               <Route path="/admin">
                 <Admin />
               </Route>
