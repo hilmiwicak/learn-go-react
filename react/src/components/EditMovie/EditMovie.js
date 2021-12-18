@@ -1,10 +1,10 @@
-import React, { Component, Fragment } from "react";
+import React, { Fragment } from "react";
 import "./EditMovie.css";
 import Input from "../form/Input";
 import TextArea from "../form/TextArea";
 import Select from "../form/Select";
 
-export default class EditMovie extends Component {
+export default class EditMovie extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -33,8 +33,17 @@ export default class EditMovie extends Component {
   }
 
   handleSubmit = (event) => {
-    console.log("Form was submitted");
     event.preventDefault();
+    const data = new FormData(event.target);
+    const payload = Object.fromEntries(data.entries());
+
+    fetch(`${process.env.REACT_APP_SERVER_URL}:${process.env.REACT_APP_SERVER_PORT}/v1/admin/editmovie`, {
+      method: "POST",
+      body: JSON.stringify(payload),
+    })
+      .then((response) => response.json())
+      .then((data) => console.log(data))
+      .catch((err) => console.error(err));
   };
 
   handleChange = (event) => {
@@ -51,7 +60,7 @@ export default class EditMovie extends Component {
   componentDidMount() {
     const id = this.props.match.params.id;
     if (id > 0) {
-      fetch("http://localhost:4000/v1/movie/" + id)
+      fetch(`${process.env.REACT_APP_SERVER_URL}:${process.env.REACT_APP_SERVER_PORT}/v1/movie/` + id)
         .then((response) => {
           if (response.status !== "200") {
             let err = Error;
