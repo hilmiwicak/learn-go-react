@@ -26,24 +26,42 @@ export default class EditMovie extends React.Component {
       ],
       isLoaded: false,
       error: null,
+      validationErrors: [],
     };
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.hasError = this.hasError.bind(this);
   }
 
   handleSubmit = (event) => {
     event.preventDefault();
+
+    // title validation
+    let validationErrors = [];
+    if (this.state.movie.title === "") {
+      validationErrors.push("title");
+    }
+
+    this.setState({ validationErrors: validationErrors });
+
+    if (validationErrors.length > 0) return false;
+
     const data = new FormData(event.target);
     const payload = Object.fromEntries(data.entries());
 
     fetch(`${process.env.REACT_APP_SERVER_URL}:${process.env.REACT_APP_SERVER_PORT}/v1/admin/editmovie`, {
-      method: "POST",
-      body: JSON.stringify(payload),
-    })
+        method: "POST",
+        body: JSON.stringify(payload),
+      }
+    )
       .then((response) => response.json())
       .then((data) => console.log(data))
       .catch((err) => console.error(err));
+  };
+
+  hasError(key) {
+    return this.state.validationErrors.indexOf(key) !== -1;
   };
 
   handleChange = (event) => {
@@ -121,10 +139,13 @@ export default class EditMovie extends React.Component {
 
             <Input
               title={"Title"}
+              className={this.hasError("title") ? "is-invalid" : ""}
               type={"text"}
               name={"title"}
               value={movie.title}
               handleChange={this.handleChange}
+              errorDiv={this.hasError("title") ? "text-danger" : "d-none"}
+              errorMsg={"Please enter a title"}
             />
 
             <Input
